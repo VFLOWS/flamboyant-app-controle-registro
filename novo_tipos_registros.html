@@ -1,0 +1,178 @@
+<html><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+  <style>::-webkit-scrollbar { display: none;}</style>
+  <script>tailwind.config = {
+"theme": {
+  "extend": {
+    "fontFamily": {
+      "inter": [
+        "Inter",
+        "sans-serif"
+      ],
+      "sans": [
+        "Inter",
+        "sans-serif"
+      ]
+    },
+    "colors": {
+      "primary": "#2563eb",
+      "secondary": "#64748b"
+    }
+  }
+}
+};</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;500;600;700;800;900&amp;display=swap"><style>
+    body {
+      font-family: 'Inter', sans-serif !important;
+    }
+    
+    /* Preserve Font Awesome icons */
+    .fa, .fas, .far, .fal, .fab {
+      font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+    }
+  </style><style>
+.highlighted-section {
+  outline: 2px solid #3F20FB;
+  background-color: rgba(63, 32, 251, 0.1);
+}
+
+.edit-button {
+  position: absolute;
+  z-index: 1000;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+html, body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+</style></head>
+<body class="bg-gray-50 font-inter">
+  <div id="main-container" class="min-h-screen">
+      <header id="header" class="bg-white shadow-sm border-b border-gray-100">
+          <div class="max-w-7xl mx-auto px-6 py-4">
+              <div class="flex items-center justify-between">
+                  <div class="flex items-center gap-4">
+                      <button onclick="goBack()" class="text-gray-600 hover:text-gray-800 transition-colors">
+                          <i class="fa-solid fa-arrow-left text-xl"></i>
+                      </button>
+                      <div>
+                          <h1 class="text-2xl font-bold text-gray-800">Novo Tipo de Registro</h1>
+                          <p class="text-gray-500">Shopping Flamboyant</p>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </header>
+
+      <main id="form-container" class="max-w-3xl mx-auto px-6 py-8">
+          <div id="form-card" class="bg-white rounded-xl shadow-sm border border-gray-100">
+              <div class="p-8">
+                  <form id="new-record-type-form" class="space-y-6">
+                      <div id="name-field">
+                          <label for="type-name" class="block text-sm font-semibold text-gray-700 mb-2">
+                              Nome do Tipo de Registro
+                              <span class="text-red-500">*</span>
+                          </label>
+                          <input type="text" id="type-name" name="type-name" required="" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors" placeholder="Digite o nome do tipo de registro">
+                          <div id="name-error" class="hidden mt-2 text-sm text-red-600">
+                              <i class="fa-solid fa-exclamation-circle mr-1"></i>
+                              Este campo é obrigatório
+                          </div>
+                      </div>
+
+                      <div id="description-field">
+                          <label for="type-description" class="block text-sm font-semibold text-gray-700 mb-2">
+                              Descrição
+                          </label>
+                          <textarea id="type-description" name="type-description" rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors resize-none" placeholder="Descreva o tipo de registro hidráulico (opcional)"></textarea>
+                      </div>
+
+                      <div id="status-field">
+                          <label for="type-status" class="block text-sm font-semibold text-gray-700 mb-2">
+                              Situação
+                          </label>
+                          <select id="type-status" name="type-status" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary transition-colors">
+                              <option value="active">Ativo</option>
+                              <option value="inactive">Inativo</option>
+                          </select>
+                      </div>
+                  </form>
+              </div>
+          </div>
+
+          <div id="form-actions" class="mt-8 flex justify-end gap-4">
+              <button type="button" onclick="cancelForm()" class="px-6 py-3 bg-gray-200 text-gray-700 font-semibold rounded-lg hover:bg-gray-300 transition-colors">
+                  Cancelar
+              </button>
+              <button type="submit" form="new-record-type-form" class="px-6 py-3 bg-green-600 text-white font-semibold rounded-lg hover:bg-green-700 transition-colors flex items-center gap-2">
+                  <i class="fa-solid fa-check"></i>
+                  Salvar
+              </button>
+          </div>
+      </main>
+  </div>
+
+  <script>
+      function goBack() {
+          window.history.back();
+      }
+
+      function cancelForm() {
+          if (confirm('Deseja cancelar? As alterações não salvas serão perdidas.')) {
+              goBack();
+          }
+      }
+
+      function validateForm() {
+          const nameField = document.getElementById('type-name');
+          const nameError = document.getElementById('name-error');
+          let isValid = true;
+
+          if (!nameField.value.trim()) {
+              nameError.classList.remove('hidden');
+              nameField.classList.add('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+              nameField.classList.remove('border-gray-300', 'focus:ring-primary', 'focus:border-primary');
+              isValid = false;
+          } else {
+              nameError.classList.add('hidden');
+              nameField.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+              nameField.classList.add('border-gray-300', 'focus:ring-primary', 'focus:border-primary');
+          }
+
+          return isValid;
+      }
+
+      document.getElementById('new-record-type-form').addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          if (validateForm()) {
+              const formData = new FormData(this);
+              const data = Object.fromEntries(formData);
+              
+              console.log('Dados do formulário:', data);
+              
+              alert('Tipo de registro salvo com sucesso!');
+              goBack();
+          }
+      });
+
+      document.getElementById('type-name').addEventListener('input', function() {
+          const nameError = document.getElementById('name-error');
+          if (this.value.trim()) {
+              nameError.classList.add('hidden');
+              this.classList.remove('border-red-500', 'focus:ring-red-500', 'focus:border-red-500');
+              this.classList.add('border-gray-300', 'focus:ring-primary', 'focus:border-primary');
+          }
+      });
+  </script>
+
+</body></html>

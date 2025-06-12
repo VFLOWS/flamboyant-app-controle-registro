@@ -1,0 +1,1173 @@
+<html><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+  <style>::-webkit-scrollbar { display: none;}</style>
+  <script>tailwind.config = {
+"theme": {
+  "extend": {
+    "fontFamily": {
+      "inter": [
+        "Inter",
+        "sans-serif"
+      ],
+      "sans": [
+        "Inter",
+        "sans-serif"
+      ]
+    },
+    "colors": {
+      "primary": "#2563eb",
+      "secondary": "#64748b"
+    }
+  }
+}
+};</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;500;600;700;800;900&amp;display=swap"><style>
+    body {
+      font-family: 'Inter', sans-serif !important;
+    }
+    
+    /* Preserve Font Awesome icons */
+    .fa, .fas, .far, .fal, .fab {
+      font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+    }
+  </style><style>
+    .highlighted-section {
+      outline: 2px solid #3F20FB;
+      background-color: rgba(63, 32, 251, 0.1);
+    }
+
+    .edit-button {
+      position: absolute;
+      z-index: 1000;
+    }
+
+    ::-webkit-scrollbar {
+      display: none;
+    }
+
+    html, body {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style><style>
+    .required-field::after {
+      content: " *";
+      color: #ef4444; /* Vermelho Tailwind red-500 */
+    }
+  </style>
+  <!-- Sidebar Styles -->
+  <style>
+    /* Sidebar container */
+    .sidebar-container {
+      min-height: 100vh;
+      display: flex;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      z-index: 20;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    
+    /* Sidebar header */
+    .sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    /* Navigation links */
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      color: #4b5563;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    
+    .nav-link:hover, .nav-link.active {
+      background: #f3f4f6;
+      color: #1f2937;
+    }
+    
+    .nav-link i {
+      margin-right: 0.75rem;
+      width: 20px;
+      text-align: center;
+    }
+    
+    /* Mobile menu button */
+    .mobile-menu-btn {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 30;
+      background: white;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Overlay for mobile */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 1023px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+      }
+      
+      .sidebar-overlay.active {
+        display: block;
+      }
+      
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .main-content {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-inter">
+
+  <!-- Mobile Menu Button -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn">
+    <i class="fas fa-bars text-gray-700"></i>
+  </button>
+  
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+      <div class="flex items-center">
+        <i class="fas fa-tint text-blue-600 text-xl mr-2"></i>
+        <span class="font-semibold text-gray-800">Controle de Registros Hidráulicos</span>
+      </div>
+      <button class="lg:hidden" id="closeSidebar">
+        <i class="fas fa-times text-gray-500"></i>
+      </button>
+    </div>
+    
+    <!-- Navigation Links -->
+    <nav class="py-4">
+      <a href="inicio.html" class="nav-link">
+        <i class="fas fa-home"></i>
+        Início
+      </a>
+      <a href="lista_registros.html" class="nav-link active">
+        <i class="fas fa-list-ul"></i>
+        Lista de Registros Hidráulicos
+      </a>
+      <a href="lista_movimentacao_registros.html" class="nav-link">
+        <i class="fas fa-exchange-alt"></i>
+        Movimentação de Registros Hidráulicos
+      </a>
+      <a href="lista_modelos_registros.html" class="nav-link">
+        <i class="fas fa-copy"></i>
+        Modelos de Registros Hidráulicos
+      </a>
+      <a href="lista_tipos_registros.html" class="nav-link">
+        <i class="fas fa-tags"></i>
+        Tipos de Registros Hidráulicos
+      </a>
+    </nav>
+    
+    <!-- User Section -->
+    <div class="mt-auto px-4 py-4 border-t border-gray-200">
+      <div class="flex items-center">
+        <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+          <i class="fas fa-user text-gray-500"></i>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm font-medium text-gray-700">Usuário</p>
+          <a href="#" class="text-xs text-gray-500 hover:text-gray-700">Sair</a>
+        </div>
+      </div>
+    </div>
+  </div>    
+
+  <!-- Conteúdo principal -->
+  
+    <div id="main-container" class="p-6 max-w-7xl mx-auto">
+        <header id="header" class="flex justify-between items-center mb-8">
+            <div>
+                <h1 class="text-2xl font-bold text-gray-800">Registros Hidráulicos</h1>
+                <p class="text-gray-500">Shopping Flamboyant</p>
+            </div>
+            <button id="new-record-btn" onclick="openModal('add')" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+                <i class="fa-solid fa-plus"></i>
+                Novo Registro
+            </button>
+        </header>
+
+        <section id="filters" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 mb-6">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4">
+                <div class="flex flex-col">
+                    <label class="text-sm font-medium text-gray-700 mb-1">Nome do Registro</label>
+                    <input type="text" class="border border-gray-300 rounded-lg px-3 py-2" placeholder="Buscar por nome...">
+                </div>
+                <div class="flex flex-col">
+                    <label class="text-sm font-medium text-gray-700 mb-1">Tipo do Registro</label>
+                    <select class="border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">Todos</option>
+                        <option value="agua">Água Potável</option>
+                        <option value="incendio">Incêndio</option>
+                        <option value="gas">Gás</option>
+                    </select>
+                </div>
+                <div class="flex flex-col">
+                    <label class="text-sm font-medium text-gray-700 mb-1">Localização</label>
+                    <select class="border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">Todas</option>
+                        <option value="LUC">LUC</option>
+                        <option value="VGA">VGA</option>
+                        <option value="BAGS">BAGS</option>
+                        <option value="NA">NA</option>
+                    </select>
+                </div>
+                <div class="flex flex-col">
+                    <label class="text-sm font-medium text-gray-700 mb-1">Status</label>
+                    <select class="border border-gray-300 rounded-lg px-3 py-2">
+                        <option value="">Todos</option>
+                        <option value="aberto">Aberto</option>
+                        <option value="fechado">Fechado</option>
+                    </select>
+                </div>
+            </div>
+        </section>
+
+        <section id="records-table" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+            <div class="overflow-x-auto">
+                <table class="w-full">
+                    <thead class="bg-gray-50 border-b border-gray-100">
+                        <tr>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Código</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Tipo</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Nome</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Localização</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Status</th>
+                            <th class="px-6 py-4 text-left text-sm font-semibold text-gray-700">Ações</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-gray-100" id="recordsTableBody">
+                        <tr class="hover:bg-gray-50" data-id="1">
+                            <td class="px-6 py-4 text-sm text-gray-700">REG001</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">Água Potável</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">Registro Principal</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">LUC</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-700">Aberto</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex gap-3">
+                                    <button onclick="openModal('edit', 1)" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800" onclick="openDeleteModal(1)">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-800" onclick="openHistoryModal(1)">
+                                        <i class="fa-solid fa-clock-rotate-left"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50" data-id="2">
+                            <td class="px-6 py-4 text-sm text-gray-700">REG002</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">Incêndio</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">Registro de Emergência</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">VGA</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 text-sm font-medium rounded-full bg-red-100 text-red-700">Fechado</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex gap-3">
+                                    <button onclick="openModal('edit', 2)" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800" onclick="openDeleteModal(2)">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-800" onclick="openHistoryModal(2)">
+                                        <i class="fa-solid fa-clock-rotate-left"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50" data-id="3">
+                            <td class="px-6 py-4 text-sm text-gray-700">REG003</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">Gás</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">Registro de GLP</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">BAGS</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-700">Aberto</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex gap-3">
+                                    <button onclick="openModal('edit', 3)" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800" onclick="openDeleteModal(3)">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-800" onclick="openHistoryModal(3)">
+                                        <i class="fa-solid fa-clock-rotate-left"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50" data-id="4">
+                            <td class="px-6 py-4 text-sm text-gray-700">REG004</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">Água Gelada</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">Registro de Água Gelada</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">NA</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 text-sm font-medium rounded-full bg-red-100 text-red-700">Fechado</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex gap-3">
+                                    <button onclick="openModal('edit', 4)" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800" onclick="openDeleteModal(4)">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-800" onclick="openHistoryModal(4)">
+                                        <i class="fa-solid fa-clock-rotate-left"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                        <tr class="hover:bg-gray-50" data-id="5">
+                            <td class="px-6 py-4 text-sm text-gray-700">REG005</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">Água Potável</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">Registro do Banheiro</td>
+                            <td class="px-6 py-4 text-sm text-gray-700">LUC</td>
+                            <td class="px-6 py-4">
+                                <span class="px-3 py-1 text-sm font-medium rounded-full bg-green-100 text-green-700">Aberto</span>
+                            </td>
+                            <td class="px-6 py-4">
+                                <div class="flex gap-3">
+                                    <button onclick="openModal('edit', 5)" class="text-blue-600 hover:text-blue-800">
+                                        <i class="fa-solid fa-pen-to-square"></i>
+                                    </button>
+                                    <button class="text-red-600 hover:text-red-800" onclick="openDeleteModal(5)">
+                                        <i class="fa-solid fa-trash"></i>
+                                    </button>
+                                    <button class="text-gray-600 hover:text-gray-800" onclick="openHistoryModal(5)">
+                                        <i class="fa-solid fa-clock-rotate-left"></i>
+                                    </button>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+
+  <!-- Modal -->
+  <div id="recordModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+      <div class="relative top-10 mx-auto p-5 w-full max-w-4xl">
+          <div class="bg-white rounded-xl shadow-lg border border-gray-100 p-8">
+              <div class="flex justify-between items-center mb-6">
+                  <h3 class="text-2xl font-bold text-gray-800" id="modalTitle">Novo Registro Hidráulico</h3>
+                  <button onclick="closeModal()" class="text-gray-600 hover:text-gray-800 p-2">
+                      <i class="fa-solid fa-xmark text-xl"></i>
+                  </button>
+              </div>
+              <form id="recordForm" class="space-y-6">
+                  <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                      <div id="basic-info" class="space-y-6">
+                          <div class="flex flex-col">
+                              <label class="text-sm font-semibold text-gray-700 mb-2 required-field">Tipo do Registro</label>
+                              <select id="recordType" class="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                  <option value="">Selecione o tipo</option>
+                                  <option value="agua-potavel">Água Potável</option>
+                                  <option value="incendio">Incêndio</option>
+                                  <option value="agua-gelada">Água Gelada</option>
+                                  <option value="gas">Gás</option>
+                              </select>
+                          </div>
+
+                          <div class="flex flex-col">
+                            <label class="text-sm font-semibold text-gray-700 mb-2 required-field">Modelo</label>
+                            <select id="model" class="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                <option value="">Selecione o modelo</option>
+                                <option value="pressao">Registro de Pressão</option>
+                                <option value="gaveta">Registro de Gaveta</option>
+                                <option value="esfera">Registro de Esfera</option>
+                                <option value="globo">Registro de Globo</option>
+                                <option value="angulo">Registro de Ângulo</option>
+                                <option value="retencao">Registro de Retenção</option>
+                                <option value="reducao">Registro de Redução</option>
+                                <option value="pvc">Registro PVC Rosqueável</option>
+                                <option value="metal">Registro Metal Pesado</option>
+                                <option value="inox">Registro de Esfera em Aço Inox</option>
+                            </select>
+                        </div>
+
+                          <div class="flex flex-col">
+                              <label class="text-sm font-semibold text-gray-700 mb-2 required-field">Nome do Registro</label>
+                              <input type="text" id="recordName" class="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" placeholder="Digite o nome do registro" required>
+                          </div>
+
+                          <div class="flex flex-col">
+                              <label class="text-sm font-semibold text-gray-700 mb-2 required-field">Localização</label>
+                              <select id="location" class="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                  <option value="">Selecione a localização</option>
+                                  <option value="LUC">LUC</option>
+                                  <option value="VGA">VGA</option>
+                                  <option value="BAGS">BAGS</option>
+                                  <option value="NA">NA</option>
+                              </select>
+                          </div>
+
+                          <div class="flex flex-col">
+                              <label class="text-sm font-semibold text-gray-700 mb-2 required-field">Status</label>
+                              <select id="status" class="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                                  <option value="aberto">Aberto</option>
+                                  <option value="fechado">Fechado</option>
+                              </select>
+                          </div>
+
+                          <div class="flex flex-col">
+                              <label class="text-sm font-semibold text-gray-700 mb-2">Observação</label>
+                              <textarea id="observation" class="border border-gray-300 rounded-lg px-4 py-3 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 h-32" placeholder="Adicione uma observação sobre o registro"></textarea>
+                          </div>
+                      </div>
+
+                      <div id="upload-section" class="space-y-6">
+                          <div class="flex flex-col">
+                              <label class="text-sm font-semibold text-gray-700 mb-2">Foto do Registro</label>
+                              <div id="photo-upload" class="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors cursor-pointer">
+                                  <div id="photo-preview" class="hidden">
+                                      <img id="photo-preview-img" src="" alt="Preview" class="max-h-48 mx-auto mb-4 rounded-lg">
+                                      <button type="button" onclick="removePhoto()" class="text-red-600 hover:text-red-800 text-sm font-medium">
+                                          <i class="fa-solid fa-trash mr-1"></i> Remover foto
+                                      </button>
+                                  </div>
+                                  <div id="photo-placeholder" class="text-center">
+                                      <i class="fa-solid fa-camera text-4xl text-gray-400 mb-3"></i>
+                                      <p class="text-sm text-gray-500">Clique para adicionar uma foto</p>
+                                      <p class="text-xs text-gray-400 mt-1">Formatos: JPG, PNG (Máx. 5MB)</p>
+                                  </div>
+                                  <input type="file" id="photo-input" accept="image/*" class="hidden">
+                              </div>
+                          </div>
+
+                          <div class="flex flex-col">
+                              <label class="text-sm font-semibold text-gray-700 mb-2">Anexos</label>
+                              <div class="border-2 border-dashed border-gray-300 rounded-lg p-4 text-center hover:border-blue-400 transition-colors cursor-pointer" onclick="document.getElementById('files-input').click()">
+                                  <i class="fa-solid fa-file-arrow-up text-2xl text-gray-400 mb-2"></i>
+                                  <p class="text-sm text-gray-600">Arraste e solte arquivos aqui ou clique para selecionar</p>
+                                  <p class="text-xs text-gray-400 mt-1">Formatos: PDF, DOC, XLS, JPG, PNG (Máx. 10MB cada)</p>
+                              </div>
+                              <input type="file" id="files-input" multiple class="hidden">
+                              <div id="files-list" class="mt-3 space-y-2"></div>
+                          </div>
+                      </div>
+                  </div>
+
+                  <div class="flex justify-end gap-4 pt-6 border-t border-gray-200 mt-8">
+                      <button type="button" onclick="closeModal()" class="px-6 py-3 border border-gray-300 rounded-lg text-gray-700 font-semibold hover:bg-gray-50 transition-colors">
+                          Cancelar
+                      </button>
+                      <button type="submit" class="px-8 py-3 bg-green-600 hover:bg-green-700 text-white font-semibold rounded-lg shadow-lg transition-colors flex items-center gap-2">
+                          <i class="fa-solid fa-check"></i>
+                          Salvar Registro
+                      </button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+
+  <!-- Modal de Exclusão -->
+  <div id="deleteModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div class="bg-white rounded-xl shadow-xl max-w-md w-full mx-4">
+          <div class="p-6">
+              <div class="flex items-center justify-center w-12 h-12 mx-auto bg-red-100 rounded-full mb-4">
+                  <i class="fa-solid fa-triangle-exclamation text-red-600 text-xl"></i>
+              </div>
+              <h3 class="text-lg font-semibold text-gray-900 text-center mb-2">Excluir Registro</h3>
+              <p class="text-gray-600 text-center mb-6">Tem certeza que deseja excluir este registro? Esta ação não pode ser desfeita.</p>
+              <div class="text-center mb-6">
+                  <p class="text-gray-700 font-medium mb-1">Código:</p>
+                  <span id="deleteRecordCode" class="text-lg font-bold"></span>
+              </div>
+              <div class="text-center mb-6">
+                  <p class="text-gray-700 font-medium mb-1">Tipo:</p>
+                  <span id="deleteRecordType" class="text-lg font-bold"></span>
+              </div>
+              <div class="text-center mb-6">
+                  <p class="text-gray-700 font-medium mb-1">Nome:</p>
+                  <span id="deleteRecordName" class="text-lg font-bold"></span>
+              </div>
+              <div class="text-center mb-6">
+                  <p class="text-gray-700 font-medium mb-1">Localização:</p>
+                  <span id="deleteRecordLocation" class="text-lg font-bold"></span>
+              </div>
+              <div class="flex justify-center gap-4">
+                  <button type="button" onclick="closeDeleteModal()" class="px-6 py-2.5 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                      Cancelar
+                  </button>
+                  <button type="button" onclick="confirmDelete()" class="px-6 py-2.5 bg-red-600 text-white font-medium rounded-lg hover:bg-red-700 transition-colors">
+                      Sim, excluir
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Modal de Histórico -->
+  <div id="historyModal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+      <div class="bg-white rounded-xl shadow-xl w-full max-w-4xl max-h-[90vh] flex flex-col">
+          <!-- Cabeçalho do Modal -->
+          <div class="p-6 border-b border-gray-200 flex justify-between items-center">
+              <div>
+                  <h3 class="text-xl font-semibold text-gray-900">Histórico do Registro Hidráulico</h3>
+                  <p class="text-sm text-gray-500" id="historyRecordInfo">REG001 - Registro Principal</p>
+              </div>
+              <button type="button" onclick="closeHistoryModal()" class="text-gray-400 hover:text-gray-500">
+                  <i class="fa-solid fa-times text-2xl"></i>
+              </button>
+          </div>
+          
+          <!-- Abas -->
+          <div class="border-b border-gray-200">
+              <nav class="flex" aria-label="Tabs">
+                  <button id="tab-alteracoes" class="px-6 py-4 text-sm font-medium text-blue-600 border-b-2 border-blue-600 whitespace-nowrap" onclick="switchTab('alteracoes')">
+                      Alterações
+                  </button>
+                  <button id="tab-movimentacoes" class="px-6 py-4 text-sm font-medium text-gray-500 hover:text-gray-700 border-b-2 border-transparent whitespace-nowrap" onclick="switchTab('movimentacoes')">
+                      Movimentações
+                  </button>
+              </nav>
+          </div>
+          
+          <!-- Conteúdo das Abas -->
+          <div class="flex-1 overflow-y-auto">
+              <!-- Conteúdo da Aba de Alterações -->
+              <div id="content-alteracoes" class="p-6">
+                  <div class="space-y-4">
+                      <!-- Item de Histórico -->
+                      <div class="border-l-4 border-blue-500 pl-4 py-2">
+                          <div class="flex justify-between items-start">
+                              <div>
+                                  <p class="font-medium">Status alterado para <span class="text-green-600">Aberto</span></p>
+                                  <p class="text-sm text-gray-500">Por: João Silva • 11/06/2025 15:30</p>
+                              </div>
+                              <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Status</span>
+                          </div>
+                          <p class="mt-1 text-sm text-gray-600">Observação: Registro aberto para manutenção preventiva.</p>
+                      </div>
+                      
+                      <!-- Item de Histórico -->
+                      <div class="border-l-4 border-purple-500 pl-4 py-2">
+                          <div class="flex justify-between items-start">
+                              <div>
+                                  <p class="font-medium">Dados do registro atualizados</p>
+                                  <p class="text-sm text-gray-500">Por: Maria Santos • 10/06/2025 09:15</p>
+                              </div>
+                              <span class="px-2 py-1 text-xs rounded-full bg-purple-100 text-purple-800">Dados</span>
+                          </div>
+                          <div class="mt-2 text-sm">
+                              <p class="font-medium text-gray-700">Alterações:</p>
+                              <ul class="list-disc list-inside space-y-1 mt-1">
+                                  <li>Localização alterada de 'Pavilhão A' para 'Pavilhão B'</li>
+                                  <li>Observações atualizadas</li>
+                              </ul>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              
+              <!-- Conteúdo da Aba de Movimentações -->
+              <div id="content-movimentacoes" class="p-6 hidden">
+                  <div class="flow-root">
+                      <ul role="list" class="-mb-8">
+                          <!-- Item de Movimentação 1 -->
+                          <li>
+                              <div class="relative pb-8">
+                                  <span class="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                  <div class="relative flex space-x-3">
+                                      <div>
+                                          <span class="h-8 w-8 rounded-full bg-green-100 flex items-center justify-center ring-8 ring-white">
+                                              <i class="fa-solid fa-check text-green-600"></i>
+                                          </span>
+                                      </div>
+                                      <div class="flex-1 min-w-0">
+                                          <div class="flex justify-between items-start">
+                                              <div>
+                                                  <p class="text-sm font-medium text-gray-900">Movimentação Concluída</p>
+                                                  <p class="text-sm text-gray-500">Por: João Silva • 11/06/2025 15:30</p>
+                                              </div>
+                                              <div class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">
+                                                  FINALIZADA
+                                              </div>
+                                          </div>
+                                          <div class="mt-2 text-sm bg-gray-50 p-3 rounded-lg">
+                                              <div class="grid grid-cols-2 gap-2">
+                                                  <div>
+                                                      <p class="text-xs text-gray-500">Status Final:</p>
+                                                      <p class="font-medium">Registro Fechado</p>
+                                                  </div>
+                                                  <div>
+                                                      <p class="text-xs text-gray-500">Status Atual:</p>
+                                                      <p class="font-medium">MOVIMENTAÇÃO CONCLUÍDA</p>
+                                                  </div>
+                                              </div>
+                                              <p class="mt-2 text-sm text-gray-600">Observação: Manutenção preventiva realizada com sucesso.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </li>
+                          
+                          <!-- Item de Movimentação 2 -->
+                          <li>
+                              <div class="relative pb-8">
+                                  <span class="absolute left-4 top-4 -ml-px h-full w-0.5 bg-gray-200" aria-hidden="true"></span>
+                                  <div class="relative flex space-x-3">
+                                      <div>
+                                          <span class="h-8 w-8 rounded-full bg-yellow-100 flex items-center justify-center ring-8 ring-white">
+                                              <i class="fa-solid fa-hourglass-half text-yellow-600"></i>
+                                          </span>
+                                      </div>
+                                      <div class="flex-1 min-w-0">
+                                          <div class="flex justify-between items-start">
+                                              <div>
+                                                  <p class="text-sm font-medium text-gray-900">Em Andamento</p>
+                                                  <p class="text-sm text-gray-500">Por: Maria Santos • 10/06/2025 09:15</p>
+                                              </div>
+                                              <div class="px-2 py-1 text-xs rounded-full bg-yellow-100 text-yellow-800">
+                                                  EM ANDAMENTO
+                                              </div>
+                                          </div>
+                                          <div class="mt-2 text-sm bg-gray-50 p-3 rounded-lg">
+                                              <div class="grid grid-cols-2 gap-2">
+                                                  <div>
+                                                      <p class="text-xs text-gray-500">Status Final:</p>
+                                                      <p class="font-medium">Aguardando Definição</p>
+                                                  </div>
+                                                  <div>
+                                                      <p class="text-xs text-gray-500">Status Atual:</p>
+                                                      <p class="font-medium">OS EM EXECUÇÃO</p>
+                                                  </div>
+                                              </div>
+                                              <p class="mt-2 text-sm text-gray-600">Aguardando peças para conclusão do serviço.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </li>
+                          
+                          <!-- Item de Movimentação 3 -->
+                          <li>
+                              <div class="relative">
+                                  <div class="relative flex space-x-3">
+                                      <div>
+                                          <span class="h-8 w-8 rounded-full bg-red-100 flex items-center justify-center ring-8 ring-white">
+                                              <i class="fa-solid fa-times text-red-600"></i>
+                                          </span>
+                                      </div>
+                                      <div class="flex-1 min-w-0">
+                                          <div class="flex justify-between items-start">
+                                              <div>
+                                                  <p class="text-sm font-medium text-gray-900">Movimentação Rejeitada</p>
+                                                  <p class="text-sm text-gray-500">Por: Carlos Silva • 05/06/2025 14:20</p>
+                                              </div>
+                                              <div class="px-2 py-1 text-xs rounded-full bg-red-100 text-red-800">
+                                                  REJEITADA
+                                              </div>
+                                          </div>
+                                          <div class="mt-2 text-sm bg-gray-50 p-3 rounded-lg">
+                                              <div class="grid grid-cols-2 gap-2">
+                                                  <div>
+                                                      <p class="text-xs text-gray-500">Status Final:</p>
+                                                      <p class="font-medium">Registro Aberto</p>
+                                                  </div>
+                                                  <div>
+                                                      <p class="text-xs text-gray-500">Status Atual:</p>
+                                                      <p class="font-medium">OS REJEITADA</p>
+                                                  </div>
+                                              </div>
+                                              <p class="mt-2 text-sm text-gray-600">Motivo: Dados insuficientes para execução.</p>
+                                          </div>
+                                      </div>
+                                  </div>
+                              </div>
+                          </li>
+                      </ul>
+                  </div>
+              </div>
+          </div>
+          
+          <!-- Rodapé do Modal -->
+          <div class="px-6 py-4 border-t border-gray-200 flex justify-end">
+              <button type="button" onclick="closeHistoryModal()" class="px-4 py-2 border border-gray-300 rounded-lg text-gray-700 font-medium hover:bg-gray-50 transition-colors">
+                  Fechar
+              </button>
+          </div>
+      </div>
+  </div>
+
+  <!-- Toast de Sucesso -->
+  <div id="successToast" class="hidden fixed top-4 right-4 z-50">
+      <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-lg">
+          <div class="flex items-center">
+              <i class="fas fa-check-circle text-green-500 mr-2"></i>
+              <span id="toastMessage">Operação realizada com sucesso!</span>
+          </div>
+      </div>
+  </div>
+
+  <script>
+      // Dados de exemplo para os registros
+      const recordsData = {
+          1: {
+              code: 'REG001',
+              type: 'agua-potavel',
+              model: 'esfera',
+              name: 'Registro Principal',
+              location: 'LUC',
+              status: 'aberto',
+              observation: 'Registro principal do sistema de água potável',
+              photo: '',
+              attachments: []
+          },
+          2: {
+              code: 'REG002',
+              type: 'incendio',
+              model: 'pressao',
+              name: 'Registro de Emergência',
+              location: 'VGA',
+              status: 'fechado',
+              observation: 'Registro do sistema de combate a incêndio',
+              photo: '',
+              attachments: []
+          },
+          3: {
+              code: 'REG003',
+              type: 'gas',
+              model: 'metal',
+              name: 'Registro de GLP',
+              location: 'BAGS',
+              status: 'aberto',
+              observation: 'Registro do sistema de gás',
+              photo: '',
+              attachments: []
+          },
+          4: {
+              code: 'REG004',
+              type: 'agua-gelada',
+              model: 'esfera',
+              name: 'Registro de Água Gelada',
+              location: 'NA',
+              status: 'fechado',
+              observation: 'Registro do sistema de ar condicionado',
+              photo: '',
+              attachments: []
+          },
+          5: {
+              code: 'REG005',
+              type: 'agua-potavel',
+              model: 'gaveta',
+              name: 'Registro do Banheiro',
+              location: 'LUC',
+              status: 'aberto',
+              observation: 'Registro do banheiro principal',
+              photo: '',
+              attachments: []
+          }
+      };
+
+      // Função para carregar os dados do registro no modal
+      function loadRecordData(recordId) {
+          const record = recordsData[recordId];
+          if (!record) return;
+
+          // Preencher os campos do formulário
+          document.getElementById('recordType').value = record.type;
+          document.getElementById('model').value = record.model;
+          document.getElementById('recordName').value = record.name;
+          document.getElementById('location').value = record.location;
+          document.getElementById('status').value = record.status;
+          document.getElementById('observation').value = record.observation || '';
+
+          // Atualizar preview da foto se existir
+          if (record.photo) {
+              const previewImg = document.getElementById('photo-preview-img');
+              previewImg.src = record.photo;
+              document.getElementById('photo-preview').classList.remove('hidden');
+              document.getElementById('photo-placeholder').classList.add('hidden');
+          }
+
+          // Atualizar lista de anexos se existirem
+          const filesList = document.getElementById('files-list');
+          filesList.innerHTML = '';
+          if (record.attachments && record.attachments.length > 0) {
+              record.attachments.forEach(file => {
+                  const fileItem = document.createElement('div');
+                  fileItem.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-lg';
+                  fileItem.innerHTML = `
+                      <div class="flex items-center gap-3">
+                          <i class="fa-solid fa-file text-blue-600"></i>
+                          <span class="text-sm text-gray-700">${file.name}</span>
+                          <span class="text-xs text-gray-500">(${(file.size / 1024).toFixed(2)} KB)</span>
+                      </div>
+                      <button type="button" class="text-red-600 hover:text-red-800">
+                          <i class="fa-solid fa-trash"></i>
+                      </button>
+                  `;
+                  filesList.appendChild(fileItem);
+              });
+          }
+      }
+
+      // Funções para manipulação do modal
+      function openModal(type, id = null) {
+          const modal = document.getElementById('recordModal');
+          const modalTitle = document.getElementById('modalTitle');
+          const form = document.getElementById('recordForm');
+          
+          // Resetar o formulário
+          form.reset();
+          resetFileInputs();
+          
+          if (type === 'edit' && id) {
+              modalTitle.textContent = 'Editar Registro Hidráulico';
+              loadRecordData(id);
+              // Armazenar o ID do registro sendo editado
+              form.dataset.recordId = id;
+          } else {
+              modalTitle.textContent = 'Novo Registro Hidráulico';
+              // Remover o ID do formulário se estiver em modo de adição
+              if (form.hasAttribute('data-record-id')) {
+                  form.removeAttribute('data-record-id');
+              }
+          }
+          
+          modal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+          const modal = document.getElementById('recordModal');
+          modal.classList.add('hidden');
+          document.body.style.overflow = 'auto';
+      }
+
+      // Funções para manipulação de arquivos
+      function resetFileInputs() {
+          document.getElementById('photo-preview').classList.add('hidden');
+          document.getElementById('photo-placeholder').classList.remove('hidden');
+          document.getElementById('photo-input').value = '';
+          document.getElementById('files-input').value = '';
+          document.getElementById('files-list').innerHTML = '';
+      }
+
+      // Preview da foto
+      document.getElementById('photo-upload').addEventListener('click', function() {
+          document.getElementById('photo-input').click();
+      });
+
+      document.getElementById('photo-input').addEventListener('change', function(e) {
+          const file = e.target.files[0];
+          if (file) {
+              const reader = new FileReader();
+              reader.onload = function(e) {
+                  const previewImg = document.getElementById('photo-preview-img');
+                  previewImg.src = e.target.result;
+                  document.getElementById('photo-preview').classList.remove('hidden');
+                  document.getElementById('photo-placeholder').classList.add('hidden');
+              }
+              reader.readAsDataURL(file);
+          }
+      });
+
+      function removePhoto() {
+          document.getElementById('photo-preview').classList.add('hidden');
+          document.getElementById('photo-placeholder').classList.remove('hidden');
+          document.getElementById('photo-input').value = '';
+      }
+
+      // Gerenciamento de anexos
+      document.getElementById('files-input').addEventListener('change', function(e) {
+          const filesList = document.getElementById('files-list');
+          filesList.innerHTML = '';
+          
+          Array.from(e.target.files).forEach(file => {
+              const fileItem = document.createElement('div');
+              fileItem.className = 'flex items-center justify-between bg-gray-50 p-3 rounded-lg';
+              fileItem.innerHTML = `
+                  <div class="flex items-center gap-3">
+                      <i class="fa-solid fa-file text-blue-600"></i>
+                      <span class="text-sm text-gray-700">${file.name}</span>
+                      <span class="text-xs text-gray-500">(${(file.size / 1024 / 1024).toFixed(2)} MB)</span>
+                  </div>
+                  <button type="button" class="text-red-600 hover:text-red-800">
+                      <i class="fa-solid fa-trash"></i>
+                  </button>
+              `;
+              filesList.appendChild(fileItem);
+          });
+      });
+
+      // Envio do formulário
+      document.getElementById('recordForm').addEventListener('submit', function(event) {
+          event.preventDefault();
+          
+          // Aqui você pode adicionar a lógica para salvar os dados
+          console.log('Dados do formulário:', Object.fromEntries(new FormData(event.target)));
+          
+          // Fechar o modal
+          closeModal();
+          
+          // Mostrar mensagem de sucesso
+          const isEdit = event.target.hasAttribute('data-record-id');
+          const message = isEdit ? 'Registro atualizado com sucesso!' : 'Registro adicionado com sucesso!';
+          showSuccessToast(message);
+      });
+
+      // Variável para armazenar o ID do registro a ser excluído
+      let recordToDelete = null;
+
+      // Função para abrir o modal de exclusão com os dados do registro
+      function openDeleteModal(recordId) {
+          const record = recordsData[recordId];
+          if (!record) return;
+
+          recordToDelete = recordId;
+          
+          // Preencher os dados do registro no modal
+          document.getElementById('deleteRecordCode').textContent = record.code;
+          document.getElementById('deleteRecordType').textContent = getTypeDisplayName(record.type);
+          document.getElementById('deleteRecordName').textContent = record.name;
+          document.getElementById('deleteRecordLocation').textContent = record.location;
+          
+          document.getElementById('deleteModal').classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+      }
+
+      // Função para fechar o modal de exclusão
+      function closeDeleteModal() {
+          recordToDelete = null;
+          document.getElementById('deleteModal').classList.add('hidden');
+          document.body.style.overflow = 'auto';
+      }
+
+      // Função para confirmar a exclusão
+      function confirmDelete() {
+          if (!recordToDelete) {
+              closeDeleteModal();
+              return;
+          }
+
+          // Simulando exclusão (substitua pelo seu código real)
+          console.log('Excluindo registro:', recordToDelete);
+          
+          // Fechar o modal
+          closeDeleteModal();
+          
+          // Mostrar mensagem de sucesso
+          showSuccessToast('Registro excluído com sucesso!');
+          
+          // Aqui você pode adicionar a lógica para remover a linha da tabela
+          // document.querySelector(`tr[data-id="${recordToDelete}"]`).remove();
+      }
+
+      // Função auxiliar para obter o nome de exibição do tipo
+      function getTypeDisplayName(type) {
+          const types = {
+              'agua-potavel': 'Água Potável',
+              'incendio': 'Incêndio',
+              'gas': 'Gás',
+              'agua-gelada': 'Água Gelada'
+          };
+          return types[type] || type;
+      }
+
+      // Função para exibir o toast de sucesso
+      function showSuccessToast(message) {
+          const toast = document.getElementById('successToast');
+          const toastMessage = document.getElementById('toastMessage');
+          
+          toastMessage.textContent = message;
+          toast.classList.remove('hidden');
+          
+          // Esconder o toast após 3 segundos
+          setTimeout(() => {
+              toast.classList.add('hidden');
+          }, 3000);
+      }
+
+      // Atualizar os botões de exclusão para usar o novo modal
+      document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('button.text-red-600').forEach(button => {
+              // Verificar se o botão é de exclusão (ícone de lixeira)
+              if (button.innerHTML.includes('fa-trash')) {
+                  // Obter o ID do registro a partir da linha da tabela
+                  const recordId = button.closest('tr').getAttribute('data-id');
+                  button.onclick = (e) => {
+                      e.preventDefault();
+                      openDeleteModal(recordId);
+                  };
+              }
+          });
+      });
+
+      // Funções para controlar o modal de histórico
+      let currentRecordId = null;
+
+      function openHistoryModal(recordId) {
+          const record = recordsData[recordId];
+          if (!record) return;
+
+          currentRecordId = recordId;
+          document.getElementById('historyRecordInfo').textContent = `${record.code} - ${record.name}`;
+          document.getElementById('historyModal').classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+          
+          // Carregar histórico do registro (simulação)
+          // Aqui você faria uma chamada para buscar o histórico real
+          console.log('Carregando histórico para o registro:', recordId);
+      }
+
+      function closeHistoryModal() {
+          document.getElementById('historyModal').classList.add('hidden');
+          document.body.style.overflow = 'auto';
+          currentRecordId = null;
+      }
+
+      function switchTab(tabName) {
+          // Atualiza as abas
+          document.querySelectorAll('[id^="tab-"]').forEach(tab => {
+              tab.classList.remove('text-blue-600', 'border-blue-600');
+              tab.classList.add('text-gray-500', 'border-transparent', 'hover:text-gray-700');
+          });
+          document.getElementById(`tab-${tabName}`).classList.add('text-blue-600', 'border-blue-600');
+          document.getElementById(`tab-${tabName}`).classList.remove('text-gray-500', 'border-transparent');
+          
+          // Atualiza o conteúdo visível
+          document.querySelectorAll('[id^="content-"]').forEach(content => {
+              content.classList.add('hidden');
+          });
+          document.getElementById(`content-${tabName}`).classList.remove('hidden');
+      }
+
+      // Adiciona evento de clique nos botões de histórico
+      document.addEventListener('DOMContentLoaded', function() {
+          document.querySelectorAll('.fa-clock-rotate-left').forEach(icon => {
+              const button = icon.closest('button');
+              if (button) {
+                  const recordId = button.closest('tr').getAttribute('data-id');
+                  button.onclick = (e) => {
+                      e.preventDefault();
+                      openHistoryModal(recordId);
+                  };
+              }
+          });
+      });
+    </script>
+    <script>
+      // Funções do Sidebar
+      function toggleSidebar() {
+        const sidebar = document.getElementById('sidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        sidebar.classList.toggle('active');
+        overlay.classList.toggle('active');
+        document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+      }
+
+      // Fechar sidebar ao clicar fora
+      document.addEventListener('click', function(e) {
+        const sidebar = document.getElementById('sidebar');
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebar');
+        const overlay = document.getElementById('sidebarOverlay');
+        
+        if (sidebar.classList.contains('active') && 
+            !sidebar.contains(e.target) && 
+            e.target !== mobileMenuBtn && 
+            !mobileMenuBtn.contains(e.target) &&
+            e.target !== closeSidebarBtn) {
+          toggleSidebar();
+        }
+      });
+      
+      // Inicialização do sidebar
+      document.addEventListener('DOMContentLoaded', function() {
+        const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+        const closeSidebarBtn = document.getElementById('closeSidebar');
+        
+        // Abrir/fechar sidebar no botão de menu
+        if (mobileMenuBtn) {
+          mobileMenuBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleSidebar();
+          });
+        }
+        
+        // Fechar sidebar no botão de fechar
+        if (closeSidebarBtn) {
+          closeSidebarBtn.addEventListener('click', function(e) {
+            e.stopPropagation();
+            toggleSidebar();
+          });
+        }
+        
+        // Fechar com tecla ESC
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape' && document.getElementById('sidebar').classList.contains('active')) {
+            toggleSidebar();
+          }
+        });
+      });
+    </script>
+</body>
+</html>

@@ -1,0 +1,781 @@
+<html><head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script> window.FontAwesomeConfig = { autoReplaceSvg: 'nest'};</script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+  
+  <style>::-webkit-scrollbar { display: none;}</style>
+  <script>tailwind.config = {
+"theme": {
+  "extend": {
+    "fontFamily": {
+      "inter": [
+        "Inter",
+        "sans-serif"
+      ],
+      "sans": [
+        "Inter",
+        "sans-serif"
+      ]
+    },
+    "colors": {
+      "primary": "#2563eb",
+      "secondary": "#64748b"
+    }
+  }
+}
+};</script>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin=""><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@100;200;300;500;600;700;800;900&amp;display=swap"><style>
+    body {
+      font-family: 'Inter', sans-serif !important;
+    }
+    
+    /* Preserve Font Awesome icons */
+    .fa, .fas, .far, .fal, .fab {
+      font-family: "Font Awesome 6 Free", "Font Awesome 6 Brands" !important;
+    }
+  </style><style>
+.highlighted-section {
+  outline: 2px solid #3F20FB;
+  background-color: rgba(63, 32, 251, 0.1);
+}
+
+.edit-button {
+  position: absolute;
+  z-index: 1000;
+}
+
+::-webkit-scrollbar {
+  display: none;
+}
+
+html, body {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.required:after {
+  content: " *";
+  color: #ef4444;
+}
+</style>
+  <!-- Sidebar Styles -->
+  <style>
+    /* Sidebar container */
+    .sidebar-container {
+      min-height: 100vh;
+      display: flex;
+    }
+    
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: white;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      transition: transform 0.3s ease;
+      z-index: 20;
+      position: fixed;
+      height: 100vh;
+      overflow-y: auto;
+    }
+    
+    /* Sidebar header */
+    .sidebar-header {
+      padding: 1.5rem;
+      border-bottom: 1px solid #e5e7eb;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+    
+    /* Navigation links */
+    .nav-link {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 1.5rem;
+      color: #4b5563;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+    
+    .nav-link:hover, .nav-link.active {
+      background: #f3f4f6;
+      color: #1f2937;
+    }
+    
+    .nav-link i {
+      margin-right: 0.75rem;
+      width: 20px;
+      text-align: center;
+    }
+    
+    /* Mobile menu button */
+    .mobile-menu-btn {
+      display: none;
+      position: fixed;
+      top: 1rem;
+      left: 1rem;
+      z-index: 30;
+      background: white;
+      border: none;
+      border-radius: 0.5rem;
+      padding: 0.5rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    
+    /* Overlay for mobile */
+    .sidebar-overlay {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 10;
+    }
+    
+    /* Responsive styles */
+    @media (max-width: 1023px) {
+      .sidebar {
+        transform: translateX(-100%);
+      }
+      
+      .sidebar.active {
+        transform: translateX(0);
+      }
+      
+      .mobile-menu-btn {
+        display: block;
+      }
+      
+      .sidebar-overlay.active {
+        display: block;
+      }
+      
+      .main-content {
+        margin-left: 0;
+        width: 100%;
+      }
+    }
+    
+    @media (min-width: 1024px) {
+      .main-content {
+        margin-left: 260px;
+        width: calc(100% - 260px);
+      }
+    }
+  </style>
+</head>
+<body class="bg-gray-50 font-inter">
+  <!-- Toast de Sucesso -->
+  <div id="successToast" class="fixed top-4 right-4 z-50 hidden">
+    <div class="bg-green-100 border-l-4 border-green-500 text-green-700 p-4 rounded-lg shadow-lg">
+      <div class="flex items-center">
+        <i class="fas fa-check-circle text-green-500 mr-2"></i>
+        <span id="toastMessage">Operação realizada com sucesso!</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Mobile Menu Button -->
+  <button class="mobile-menu-btn" id="mobileMenuBtn">
+    <i class="fas fa-bars text-gray-700"></i>
+  </button>
+  
+  <!-- Sidebar Overlay -->
+  <div class="sidebar-overlay" id="sidebarOverlay"></div>
+  
+  <!-- Sidebar -->
+  <div class="sidebar" id="sidebar">
+    <!-- Sidebar Header -->
+    <div class="sidebar-header">
+      <div class="flex items-center">
+        <i class="fas fa-tint text-blue-600 text-xl mr-2"></i>
+        <span class="font-semibold text-gray-800">Controle de Registros Hidráulicos</span>
+      </div>
+      <button class="lg:hidden" id="closeSidebar">
+        <i class="fas fa-times text-gray-500"></i>
+      </button>
+    </div>
+    
+    <!-- Navigation Links -->
+    <nav class="py-4">
+      <a href="inicio.html" class="nav-link">
+        <i class="fas fa-home"></i>
+        Início
+      </a>
+      <a href="lista_registros.html" class="nav-link">
+        <i class="fas fa-list-ul"></i>
+        Lista de Registros Hidráulicos
+      </a>
+      <a href="lista_movimentacao_registros.html" class="nav-link">
+        <i class="fas fa-exchange-alt"></i>
+        Movimentação de Registros Hidráulicos
+      </a>
+      <a href="lista_modelos_registros.html" class="nav-link">
+        <i class="fas fa-copy"></i>
+        Modelos de Registros Hidráulicos
+      </a>
+      <a href="lista_tipos_registros.html" class="nav-link active">
+        <i class="fas fa-tags"></i>
+        Tipos de Registros Hidráulicos
+      </a>
+    </nav>
+    
+    <!-- User Section -->
+    <div class="mt-auto px-4 py-4 border-t border-gray-200">
+      <div class="flex items-center">
+        <div class="h-10 w-10 rounded-full bg-gray-200 flex items-center justify-center">
+          <i class="fas fa-user text-gray-500"></i>
+        </div>
+        <div class="ml-3">
+          <p class="text-sm font-medium text-gray-700">Usuário</p>
+          <a href="#" class="text-xs text-gray-500 hover:text-gray-700">Sair</a>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="main-container" class="p-6 max-w-7xl mx-auto">
+      <header id="header" class="flex justify-between items-center mb-8">
+          <div>
+              <h1 class="text-2xl font-bold text-gray-800">Tipos de Registro</h1>
+              <p class="text-gray-500">Shopping Flamboyant</p>
+          </div>
+          <button id="new-type-btn" onclick="openModal('create')" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+              <i class="fa-solid fa-plus"></i>
+              Novo Tipo de Registro
+          </button>
+      </header>
+
+      <section id="filters" class="bg-white p-4 rounded-xl shadow-sm border border-gray-100 mb-6">
+          <div class="flex flex-wrap gap-4 items-center">
+              <div class="flex-1 min-w-[200px]">
+                  <input type="text" placeholder="Buscar por nome..." class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+              </div>
+              <div class="w-48">
+                  <select class="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-primary focus:border-primary">
+                      <option value="">Todos os status</option>
+                      <option value="active">Ativo</option>
+                      <option value="inactive">Inativo</option>
+                  </select>
+              </div>
+          </div>
+      </section>
+
+      <section id="records-table" class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+          <div class="overflow-x-auto">
+              <table class="w-full">
+                  <thead class="bg-gray-50">
+                      <tr>
+                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Código</th>
+                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Nome</th>
+                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Descrição</th>
+                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Situação</th>
+                          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Ações</th>
+                      </tr>
+                  </thead>
+                  <tbody class="divide-y divide-gray-200">
+                      <tr>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">001</td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Registro Geral</td>
+                          <td class="px-6 py-4 text-sm text-gray-500">Registro principal de água</td>
+                          <td class="px-6 py-4 whitespace-nowrap">
+                              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Ativo</span>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <button onclick="openModal('edit', 1)" class="text-blue-600 hover:text-blue-900 mr-3">
+                                  <i class="fa-solid fa-pen-to-square"></i>
+                              </button>
+                              <button onclick="confirmDelete(1)" class="text-red-600 hover:text-red-900 mr-3">
+                                  <i class="fa-solid fa-trash"></i>
+                              </button>
+                              <button onclick="openHistoryModal()" class="text-gray-600 hover:text-gray-900">
+                                  <i class="fa-solid fa-clock-rotate-left"></i>
+                              </button>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">002</td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Registro de Emergência</td>
+                          <td class="px-6 py-4 text-sm text-gray-500">Controle de válvulas de emergência</td>
+                          <td class="px-6 py-4 whitespace-nowrap">
+                              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Ativo</span>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <button onclick="openModal('edit', 2)" class="text-blue-600 hover:text-blue-900 mr-3">
+                                  <i class="fa-solid fa-pen-to-square"></i>
+                              </button>
+                              <button onclick="confirmDelete(2)" class="text-red-600 hover:text-red-900 mr-3">
+                                  <i class="fa-solid fa-trash"></i>
+                              </button>
+                              <button onclick="openHistoryModal()" class="text-gray-600 hover:text-gray-900">
+                                  <i class="fa-solid fa-clock-rotate-left"></i>
+                              </button>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">003</td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Registro de Água Quente</td>
+                          <td class="px-6 py-4 text-sm text-gray-500">Controle de água quente</td>
+                          <td class="px-6 py-4 whitespace-nowrap">
+                              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Ativo</span>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <button onclick="openModal('edit', 3)" class="text-blue-600 hover:text-blue-900 mr-3">
+                                  <i class="fa-solid fa-pen-to-square"></i>
+                              </button>
+                              <button onclick="confirmDelete(3)" class="text-red-600 hover:text-red-900 mr-3">
+                                  <i class="fa-solid fa-trash"></i>
+                              </button>
+                              <button onclick="openHistoryModal()" class="text-gray-600 hover:text-gray-900">
+                                  <i class="fa-solid fa-clock-rotate-left"></i>
+                              </button>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">004</td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Registro de Gás</td>
+                          <td class="px-6 py-4 text-sm text-gray-500">Controle de válvulas de gás</td>
+                          <td class="px-6 py-4 whitespace-nowrap">
+                            <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inativo</span>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <button onclick="openModal('edit', 4)" class="text-blue-600 hover:text-blue-900 mr-3">
+                                  <i class="fa-solid fa-pen-to-square"></i>
+                              </button>
+                              <button onclick="confirmDelete(4)" class="text-red-600 hover:text-red-900 mr-3">
+                                  <i class="fa-solid fa-trash"></i>
+                              </button>
+                              <button onclick="openHistoryModal()" class="text-gray-600 hover:text-gray-900">
+                                  <i class="fa-solid fa-clock-rotate-left"></i>
+                              </button>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">005</td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Registro de Incêndio</td>
+                          <td class="px-6 py-4 text-sm text-gray-500">Sistema de combate a incêndio</td>
+                          <td class="px-6 py-4 whitespace-nowrap">
+                              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">Ativo</span>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <button onclick="openModal('edit', 5)" class="text-blue-600 hover:text-blue-900 mr-3">
+                                  <i class="fa-solid fa-pen-to-square"></i>
+                              </button>
+                              <button onclick="confirmDelete(5)" class="text-red-600 hover:text-red-900 mr-3">
+                                  <i class="fa-solid fa-trash"></i>
+                              </button>
+                              <button onclick="openHistoryModal()" class="text-gray-600 hover:text-gray-900">
+                                  <i class="fa-solid fa-clock-rotate-left"></i>
+                              </button>
+                          </td>
+                      </tr>
+                      <tr>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">006</td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">Registro de Esgoto</td>
+                          <td class="px-6 py-4 text-sm text-gray-500">Controle de válvulas de esgoto</td>
+                          <td class="px-6 py-4 whitespace-nowrap">
+                              <span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">Inativo</span>
+                          </td>
+                          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                              <button onclick="openModal('edit', 6)" class="text-blue-600 hover:text-blue-900 mr-3">
+                                  <i class="fa-solid fa-pen-to-square"></i>
+                              </button>
+                              <button onclick="confirmDelete(6)" class="text-red-600 hover:text-red-900 mr-3">
+                                  <i class="fa-solid fa-trash"></i>
+                              </button>
+                              <button onclick="openHistoryModal()" class="text-gray-600 hover:text-gray-900">
+                                  <i class="fa-solid fa-clock-rotate-left"></i>
+                              </button>
+                          </td>
+                      </tr>
+                  </tbody>
+              </table>
+          </div>
+      </section>
+  </div>
+
+  <!-- Modal de Edição/Criação -->
+  <div id="modal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+      <div class="relative top-20 mx-auto p-5 border w-full max-w-md shadow-lg rounded-md bg-white">
+          <div class="mt-3">
+              <h3 class="text-lg font-medium leading-6 text-gray-900 mb-4" id="modal-title">Novo Tipo de Registro</h3>
+              <form id="recordForm">
+                  <input type="hidden" id="recordId">
+                  
+                  <!-- Código -->
+                  <div class="mb-4">
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Código</label>
+                      <input type="text" id="recordCode" readonly 
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md bg-gray-100 text-gray-500">
+                  </div>
+                  
+                  <!-- Nome -->
+                  <div class="mb-4">
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Nome do Tipo*</label>
+                      <input type="text" id="recordName" required
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                  </div>
+                  
+                  <!-- Descrição -->
+                  <div class="mb-4">
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Descrição</label>
+                      <textarea id="recordDescription" rows="3"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary"></textarea>
+                  </div>
+                  
+                  <!-- Status -->
+                  <div class="mb-6">
+                      <label class="block text-sm font-medium text-gray-700 mb-2">Situação</label>
+                      <select id="recordStatus"
+                          class="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-primary focus:border-primary">
+                          <option value="Ativo">Ativo</option>
+                          <option value="Inativo">Inativo</option>
+                      </select>
+                  </div>
+                  
+                  <!-- Rodapé do Modal -->
+                  <div class="flex justify-end gap-3">
+                      <button type="button" onclick="closeModal()" 
+                          class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+                          Cancelar
+                      </button>
+                      <button type="submit"
+                          class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700">
+                          Salvar
+                      </button>
+                  </div>
+              </form>
+          </div>
+      </div>
+  </div>
+
+  <!-- Modal de Confirmação de Exclusão -->
+  <div id="deleteModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+      <div class="relative top-20 mx-auto p-6 w-full max-w-md">
+          <div class="bg-white rounded-xl shadow-lg border border-gray-100">
+              <div class="p-6">
+                  <div class="flex flex-col items-center">
+                      <div class="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-red-100">
+                          <i class="fas fa-exclamation text-red-600"></i>
+                      </div>
+                      <h3 class="text-lg font-semibold text-gray-800 mt-3 text-center">Gerenciar Tipo de Registro</h3>
+                      
+                      <!-- Dados do Tipo -->
+                      <div class="mt-4 w-full bg-gray-50 p-4 rounded-lg">
+                          <h4 class="font-medium text-gray-900 text-center" id="deleteRecordName">Registro Geral</h4>
+                          <div class="mt-2 grid grid-cols-2 gap-2 text-sm text-gray-600">
+                              <div class="text-right font-medium">Código:</div>
+                              <div id="deleteRecordCode" class="text-left">001</div>
+                              <div class="text-right font-medium">Descrição:</div>
+                              <div id="deleteRecordDescription" class="text-left">Registro principal de água</div>
+                              <div class="text-right font-medium">Status:</div>
+                              <div class="text-left">
+                                  <span id="deleteRecordStatus" class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full">Ativo</span>
+                              </div>
+                          </div>
+                          
+                          <!-- Aviso de registros ativos -->
+                          <div id="activeRecordsWarning" class="hidden mt-3 p-3 bg-yellow-50 border-l-4 border-yellow-400 rounded">
+                              <div class="flex">
+                                  <div class="flex-shrink-0">
+                                      <i class="fas fa-exclamation-triangle text-yellow-400"></i>
+                                  </div>
+                                  <div class="ml-3">
+                                      <p class="text-sm text-yellow-700">
+                                          Este tipo está vinculado a <span id="activeRecordsCount" class="font-semibold">0</span> registro(s) ativo(s).
+                                          <span class="block mt-1">Você não pode excluí-lo, mas pode inativá-lo.</span>
+                                      </p>
+                                  </div>
+                              </div>
+                          </div>
+                      </div>
+
+                      <div class="mt-6 w-full">
+                          <p class="text-sm text-gray-600 mb-4 text-center">O que você deseja fazer com este tipo de registro?</p>
+                          
+                          <div class="space-y-3">
+                              <button type="button" id="deleteButton" 
+                                  class="w-full flex items-center justify-center px-6 py-2.5 bg-red-600 text-white rounded-lg hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500">
+                                  <i class="fas fa-trash mr-2"></i> Excluir permanentemente
+                              </button>
+                              
+                              <button type="button" id="deactivateButton" 
+                                  class="w-full flex items-center justify-center px-6 py-2.5 bg-yellow-500 text-white rounded-lg hover:bg-yellow-600 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500">
+                                  <i class="fas fa-ban mr-2"></i> Inativar tipo
+                              </button>
+                              
+                              <button type="button" id="cancelButton" 
+                                  class="w-full flex items-center justify-center px-6 py-2.5 bg-white border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500">
+                                  <i class="fas fa-times mr-2"></i> Cancelar
+                              </button>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <!-- Modal de Histórico -->
+  <div id="historyModal" class="hidden fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full">
+      <div class="relative top-20 mx-auto p-5 border w-full max-w-2xl shadow-lg rounded-md bg-white">
+          <div class="mt-3">
+              <div class="flex justify-between items-center mb-4">
+                  <h3 class="text-lg font-medium leading-6 text-gray-900">Histórico de Alterações</h3>
+                  <button onclick="closeHistoryModal()" class="text-gray-400 hover:text-gray-500">
+                      <i class="fa-solid fa-times text-2xl"></i>
+                  </button>
+              </div>
+              <div class="mt-4 max-h-96 overflow-y-auto">
+                  <div class="space-y-4">
+                      <!-- Item de Histórico 1 -->
+                      <div class="border-l-4 border-blue-500 pl-4 py-2">
+                          <div class="flex justify-between items-start">
+                              <div>
+                                  <p class="font-medium">Tipo de registro atualizado</p>
+                                  <p class="text-sm text-gray-500">Por: Admin • 10/06/2025 14:30</p>
+                              </div>
+                              <span class="px-2 py-1 text-xs rounded-full bg-blue-100 text-blue-800">Atualização</span>
+                          </div>
+                          <div class="mt-2 text-sm">
+                              <p class="font-medium text-gray-700">Alterações:</p>
+                              <ul class="list-disc list-inside space-y-1 mt-1">
+                                  <li>Nome alterado de 'Registro Principal' para 'Registro Geral'</li>
+                                  <li>Status alterado para 'Ativo'</li>
+                              </ul>
+                          </div>
+                      </div>
+                      
+                      <!-- Item de Histórico 2 -->
+                      <div class="border-l-4 border-green-500 pl-4 py-2">
+                          <div class="flex justify-between items-start">
+                              <div>
+                                  <p class="font-medium">Tipo de registro criado</p>
+                                  <p class="text-sm text-gray-500">Por: Admin • 09/06/2025 10:15</p>
+                              </div>
+                              <span class="px-2 py-1 text-xs rounded-full bg-green-100 text-green-800">Criação</span>
+                          </div>
+                      </div>
+                  </div>
+              </div>
+              <div class="mt-4 flex justify-end">
+                  <button type="button" onclick="closeHistoryModal()" class="px-4 py-2 bg-gray-200 text-gray-800 rounded-md hover:bg-gray-300">
+                      Fechar
+                  </button>
+              </div>
+          </div>
+      </div>
+  </div>
+
+  <script>
+      function showToast(message, type = 'success') {
+          const toast = document.getElementById('successToast');
+          const toastMessage = document.getElementById('toastMessage');
+          toastMessage.textContent = message;
+          toast.classList.remove('hidden');
+          
+          // Esconde o toast após 3 segundos
+          setTimeout(() => {
+              toast.classList.add('hidden');
+          }, 3000);
+      }
+
+      function openModal(type, recordId = null) {
+          const modal = document.getElementById('modal');
+          const modalTitle = document.getElementById('modal-title');
+          const form = document.getElementById('recordForm');
+          
+          // Dados de exemplo - substitua por chamada à API real
+          const recordsData = {
+              1: { code: '001', name: 'Registro Geral', description: 'Registro principal de água', status: 'Ativo' },
+              2: { code: '002', name: 'Registro de Emergência', description: 'Controle de válvulas de emergência', status: 'Ativo' },
+              3: { code: '003', name: 'Registro de Água Quente', description: 'Controle de água quente', status: 'Inativo' },
+              4: { code: '004', name: 'Registro de Gás', description: 'Controle de válvulas de gás', status: 'Ativo' },
+              5: { code: '005', name: 'Registro de Incêndio', description: 'Sistema de combate a incêndio', status: 'Ativo' },
+              6: { code: '006', name: 'Registro de Esgoto', description: 'Controle de válvulas de esgoto', status: 'Inativo' }
+          };
+
+          // Reset do formulário
+          form.reset();
+          
+          if (type === 'edit' && recordId) {
+              modalTitle.textContent = 'Editar Tipo de Registro';
+              
+              // Carrega os dados do registro
+              const record = recordsData[recordId];
+              if (record) {
+                  document.getElementById('recordId').value = recordId;
+                  document.getElementById('recordName').value = record.name || '';
+                  document.getElementById('recordCode').value = record.code || '';
+                  document.getElementById('recordDescription').value = record.description || '';
+                  document.getElementById('recordStatus').value = record.status || 'Ativo';
+              }
+          } else {
+              modalTitle.textContent = 'Novo Tipo de Registro';
+              // Gera um código automático para novo registro
+              const nextCode = '00' + (Object.keys(recordsData).length + 1);
+              document.getElementById('recordCode').value = nextCode;
+          }
+          
+          // Mostra o modal
+          modal.classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+      }
+
+      function closeModal() {
+          const modal = document.getElementById('modal');
+          modal.classList.add('hidden');
+          document.body.style.overflow = 'auto';
+      }
+
+      function confirmDelete(recordId, activeRecords = 0) {
+          // Dados de exemplo - substitua por chamada à API real
+          const records = {
+              1: { code: '001', name: 'Registro Geral', description: 'Registro principal de água', status: 'Ativo' },
+              2: { code: '002', name: 'Registro de Emergência', description: 'Controle de válvulas de emergência', status: 'Ativo' },
+              3: { code: '003', name: 'Registro de Água Quente', description: 'Controle de água quente', status: 'Inativo' },
+              4: { code: '004', name: 'Registro de Gás', description: 'Controle de válvulas de gás', status: 'Ativo' },
+              5: { code: '005', name: 'Registro de Incêndio', description: 'Sistema de combate a incêndio', status: 'Ativo' },
+              6: { code: '006', name: 'Registro de Esgoto', description: 'Controle de válvulas de esgoto', status: 'Inativo' }
+          };
+          
+          const record = records[recordId];
+          if (!record) return;
+          
+          // Atualiza a UI com os dados do registro
+          document.getElementById('deleteRecordName').textContent = record.name;
+          document.getElementById('deleteRecordCode').textContent = record.code;
+          document.getElementById('deleteRecordDescription').textContent = record.description;
+          
+          // Atualiza o status com a cor correta
+          const statusElement = document.getElementById('deleteRecordStatus');
+          statusElement.textContent = record.status;
+          statusElement.className = 'px-2 inline-flex text-xs leading-5 font-semibold rounded-full ' + 
+                                 (record.status === 'Ativo' ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800');
+          
+          // Mostra/oculta o aviso de registros ativos
+          const warningElement = document.getElementById('activeRecordsWarning');
+          if (activeRecords > 0) {
+              warningElement.classList.remove('hidden');
+              document.getElementById('activeRecordsCount').textContent = activeRecords;
+              document.getElementById('deleteButton').classList.add('hidden');
+          } else {
+              warningElement.classList.add('hidden');
+              document.getElementById('deleteButton').classList.remove('hidden');
+          }
+          
+          // Armazena o ID do registro para uso posterior
+          document.getElementById('deleteButton').dataset.recordId = recordId;
+          document.getElementById('deactivateButton').dataset.recordId = recordId;
+          
+          // Mostra o modal
+          document.getElementById('deleteModal').classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+      }
+      
+      function closeDeleteModal() {
+          document.getElementById('deleteModal').classList.add('hidden');
+          document.body.style.overflow = 'auto';
+      }
+      
+      function deleteRecord() {
+          const button = document.getElementById('deleteButton');
+          const recordId = button.dataset.recordId;
+          
+          if (!recordId) {
+              showToast('Erro: ID do registro não encontrado', 'error');
+              return;
+          }
+          
+          // Aqui você adicionaria a lógica para excluir o registro da API
+          console.log('Excluindo registro ID:', recordId);
+          
+          // Fecha o modal de confirmação
+          closeDeleteModal();
+          
+          // Mostra mensagem de sucesso
+          showToast('Tipo de registro excluído com sucesso!');
+          
+          // Aqui você pode adicionar a lógica para remover a linha da tabela
+          // ou recarregar os dados da tabela
+      }
+      
+      function deactivateRecord() {
+          const button = document.getElementById('deactivateButton');
+          const recordId = button.dataset.recordId;
+          
+          if (!recordId) {
+              showToast('Erro: ID do registro não encontrado', 'error');
+              return;
+          }
+          
+          // Aqui você adicionaria a lógica para inativar o registro na API
+          console.log('Inativando registro ID:', recordId);
+          
+          // Fecha o modal de confirmação
+          closeDeleteModal();
+          
+          // Mostra mensagem de sucesso
+          showToast('Tipo de registro inativado com sucesso!');
+          
+          // Aqui você pode adicionar a lógica para atualizar a linha da tabela
+          // ou recarregar os dados da tabela
+      }
+      
+      function openHistoryModal() {
+          document.getElementById('historyModal').classList.remove('hidden');
+          document.body.style.overflow = 'hidden';
+      }
+      
+      function closeHistoryModal() {
+          document.getElementById('historyModal').classList.add('hidden');
+          document.body.style.overflow = 'auto';
+      }
+
+      document.getElementById('recordForm').addEventListener('submit', function(e) {
+          e.preventDefault();
+          
+          const form = e.target;
+          const recordId = form.dataset.recordId;
+          const isEdit = !!recordId;
+          
+          // Aqui você adicionaria a lógica para salvar o registro
+          // Por enquanto, apenas mostramos uma mensagem de sucesso
+          showToast(isEdit ? 'Tipo de registro atualizado com sucesso!' : 'Tipo de registro criado com sucesso!');
+          
+          // Fecha o modal após salvar
+          closeModal();
+          
+          // Aqui você pode adicionar a lógica para atualizar a tabela
+          // se necessário, ou recarregar os dados
+      });
+
+      // Fechar modais ao clicar fora
+      window.onclick = function(event) {
+          const modal = document.getElementById('modal');
+          const deleteModal = document.getElementById('deleteModal');
+          const historyModal = document.getElementById('historyModal');
+          
+          if (event.target === modal) {
+              closeModal();
+          }
+          if (event.target === deleteModal) {
+              closeDeleteModal();
+          }
+          if (event.target === historyModal) {
+              closeHistoryModal();
+          }
+      };
+      
+      document.addEventListener('DOMContentLoaded', function() {
+          document.getElementById('deleteButton').addEventListener('click', deleteRecord);
+          document.getElementById('deactivateButton').addEventListener('click', deactivateRecord);
+          document.getElementById('cancelButton').addEventListener('click', closeDeleteModal);
+      });
+  </script>
+</body>
+</html>
