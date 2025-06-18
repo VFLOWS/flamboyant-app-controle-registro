@@ -233,10 +233,10 @@
               <h1 class="text-2xl font-bold text-gray-800">Controle de Registros Hidráulicos</h1>
               <p class="text-gray-500">Shopping Flamboyant</p>
           </div>
-          <a href="nova_movimentacao_registro.html" class="bg-primary hover:bg-blue-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
-              <i data-fa-i2svg=""><svg class="svg-inline--fa fa-plus" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="plus" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 448 512" data-fa-i2svg=""><path fill="currentColor" d="M256 80c0-17.7-14.3-32-32-32s-32 14.3-32 32V224H48c-17.7 0-32 14.3-32 32s14.3 32 32 32H192V432c0 17.7 14.3 32 32 32s32-14.3 32-32V288H400c17.7 0 32-14.3 32-32s-14.3-32-32-32H256V80z"></path></svg></i>
+          <button id="new-record-btn" class="bg-green-600 hover:bg-green-700 text-white font-semibold px-6 py-3 rounded-lg shadow-lg flex items-center gap-2" onclick="openNovaMovimentacao('Registro Principal - Piso 1', 'Registro de Pressão', 'Área Técnica - Setor A', 'Aberto')">
+              <i class="fas fa-plus"></i>
               Nova Movimentação
-          </a>
+          </button>
       </header>
 
       <section id="status-cards" class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
