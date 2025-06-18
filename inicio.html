@@ -65,26 +65,68 @@
     }
     
     /* Sidebar */
-    .sidebar {
-      width: 260px;
-      background: white;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease;
-      z-index: 20;
-      position: fixed;
-      height: 100vh;
-      overflow-y: auto;
-    }
     
-    /* Sidebar header */
-    .sidebar-header {
-      padding: 1.5rem;
-      border-bottom: 1px solid #e5e7eb;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-    }
-    
+    /* Linha 58 até ~110 */
+.sidebar {
+  width: 260px;
+  background: white;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  transition: transform 0.3s;
+  z-index: 20;
+  position: fixed;
+  height: 100vh;
+  top: 0;
+  left: 0;
+  overflow-y: auto;
+  transform: translateX(-100%);
+}
+.sidebar.active {
+  transform: translateX(0);
+}
+.desktop-toggle-btn {
+  display: block;
+  position: fixed;
+  top: 1rem;
+  left: 1rem;
+  z-index: 30;
+  background: white;
+  border: none;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  cursor: pointer;
+}
+.sidebar-overlay {
+  display: none;
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  z-index: 40;
+  opacity: 0;
+  transition: opacity 0.3s;
+}
+.sidebar-overlay.active {
+  display: block;
+  opacity: 1;
+}
+.main-content {
+  margin-left: 0;
+  transition: margin-left 0.3s;
+}
+.main-content.sidebar-expanded {
+  margin-left: 260px;
+}
+@media (max-width: 1023px) {
+  .desktop-toggle-btn {
+    display: none;
+  }
+  .sidebar {
+    z-index: 50;
+  }
+  .main-content.sidebar-expanded {
+    margin-left: 0;
+  }
+}
     /* Navigation links */
     .nav-link {
       display: flex;
@@ -93,6 +135,16 @@
       color: #4b5563;
       text-decoration: none;
       transition: all 0.2s;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    
+    .nav-link i {
+      margin-right: 0.75rem;
+      width: 20px;
+      text-align: center;
+      flex-shrink: 0;
     }
     
     .nav-link:hover, .nav-link.active {
@@ -100,12 +152,7 @@
       color: #1f2937;
     }
     
-    .nav-link i {
-      margin-right: 0.75rem;
-      width: 20px;
-      text-align: center;
-    }
-    
+   
     /* Mobile menu button */
     .mobile-menu-btn {
       display: none;
@@ -118,53 +165,17 @@
       border-radius: 0.5rem;
       padding: 0.5rem;
       box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+      cursor: pointer;
     }
     
-    /* Overlay for mobile */
-    .sidebar-overlay {
-      display: none;
-      position: fixed;
-      top: 0;
-      left: 0;
-      right: 0;
-      bottom: 0;
-      background: rgba(0, 0, 0, 0.5);
-      z-index: 10;
-    }
-    
-    /* Responsive styles */
-    @media (max-width: 1023px) {
-      .sidebar {
-        transform: translateX(-100%);
-      }
-      
-      .sidebar.active {
-        transform: translateX(0);
-      }
-      
-      .mobile-menu-btn {
-        display: block;
-      }
-      
-      .sidebar-overlay.active {
-        display: block;
-      }
-      
-      .main-content {
-        margin-left: 0;
-        width: 100%;
-      }
-    }
-    
-    @media (min-width: 1024px) {
-      .main-content {
-        margin-left: 260px;
-        width: calc(100% - 260px);
-      }
-    }
   </style>
 </head>
 <body class="bg-gray-50 font-inter">
+  <!-- Botão de Toggle para Desktop -->
+  <button class="desktop-toggle-btn" id="desktopToggleBtn">
+    <i class="fas fa-bars text-gray-700"></i>
+  </button>
+  
   <!-- Mobile Menu Button -->
   <button class="mobile-menu-btn" id="mobileMenuBtn">
     <i class="fas fa-bars text-gray-700"></i>
@@ -204,10 +215,10 @@
         <i class="fas fa-copy"></i>
         Modelos de Registros Hidráulicos
       </a>
-      <a href="lista_tipos_registros.html" class="nav-link">
+      <!-- <a href="lista_tipos_registros.html" class="nav-link">
         <i class="fas fa-tags"></i>
         Tipos de Registros Hidráulicos
-      </a>
+      </a> -->
     </nav>
     
     <!-- User Section >
@@ -227,7 +238,7 @@
 
   <!-- Conteúdo principal -->
   
-  <div id="main-container" class="p-6 max-w-7xl mx-auto">
+  <div id="main-container" class="main-content p-6 max-w-7xl mx-auto">
       <header id="header" class="flex justify-between items-center mb-8">
           <div>
               <h1 class="text-2xl font-bold text-gray-800">Controle de Registros Hidráulicos</h1>
@@ -266,7 +277,7 @@
               <div id="maintenance-records" class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow cursor-pointer">
                   <div class="flex items-center justify-between mb-4">
                       <h3 class="text-lg font-semibold text-gray-700">Em Andamento</h3>
-                      <i class="text-yellow-500 text-2xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-wrench" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="wrench" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M352 320c88.4 0 160-71.6 160-160c0-15.3-2.2-30.1-6.2-44.2c-3.1-10.8-16.4-13.2-24.3-5.3l-76.8 76.8c-3 3-7.1 4.7-11.3 4.7H336c-8.8 0-16-7.2-16-16V118.6c0-4.2 1.7-8.3 4.7-11.3l76.8-76.8c7.9-7.9 5.4-21.2-5.3-24.3C382.1 2.2 367.3 0 352 0C263.6 0 192 71.6 192 160c0 19.1 3.4 37.5 9.5 54.5L19.9 396.1C7.2 408.8 0 426.1 0 444.1C0 481.6 30.4 512 67.9 512c18 0 35.3-7.2 48-19.9L297.5 310.5c17 6.2 35.4 9.5 54.5 9.5zM80 408a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"></path></svg></i>
+                      <i class="text-yellow-500 text-2xl" data-fa-i2svg=""><svg class="svg-inline--fa fa-wrench" aria-hidden="true" focusable="false" data-prefix="fas" data-icon="wrench" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" data-fa-i2svg=""><path fill="currentColor" d="M352 320c88.4 0 160-71.6 160-160c0-15.3-2.2-30.1-6.2-44.2c-3.1-10.8-16.4-13.2-24.3-5.3l-76.8 76.8c-3 3-7.1 4.7-11.3 4.7H336c-8.8 0-16-7.2-16-16V118.6c0-4.2 1.7-8.3 4.7-11.3l76.8-76.8c7.9-7.9 5.4-21.2-5.3-24.3 C382.1 2.2 367.3 0 352 0C263.6 0 192 71.6 192 160c0 19.1 3.4 37.5 9.5 54.5L19.9 396.1C7.2 408.8 0 426.1 0 444.1C0 481.6 30.4 512 67.9 512c18 0 35.3-7.2 48-19.9L297.5 310.5c17 6.2 35.4 9.5 54.5 9.5zM80 408a24 24 0 1 1 0 48 24 24 0 1 1 0-48z"></path></svg></i>
                   </div>
                   <p class="text-4xl font-bold text-yellow-500">3</p>
                   <p class="text-gray-500 text-sm mt-2">Atualizado há 5 minutos</p>
@@ -331,24 +342,33 @@
     // Funções do Sidebar
     function toggleSidebar() {
       const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('main-container');
       const overlay = document.getElementById('sidebarOverlay');
       
       sidebar.classList.toggle('active');
       overlay.classList.toggle('active');
-      document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+      
+      if (window.innerWidth >= 1024) {
+        mainContent.classList.toggle('sidebar-expanded', sidebar.classList.contains('active'));
+      } else {
+        document.body.style.overflow = sidebar.classList.contains('active') ? 'hidden' : '';
+      }
     }
 
     // Fechar sidebar ao clicar fora
     document.addEventListener('click', function(e) {
       const sidebar = document.getElementById('sidebar');
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const desktopToggleBtn = document.getElementById('desktopToggleBtn');
       const closeSidebarBtn = document.getElementById('closeSidebar');
       const overlay = document.getElementById('sidebarOverlay');
       
       if (sidebar.classList.contains('active') && 
           !sidebar.contains(e.target) && 
           e.target !== mobileMenuBtn && 
+          e.target !== desktopToggleBtn &&
           !mobileMenuBtn.contains(e.target) &&
+          !desktopToggleBtn.contains(e.target) &&
           e.target !== closeSidebarBtn) {
         toggleSidebar();
       }
@@ -357,11 +377,28 @@
     // Inicialização do sidebar
     document.addEventListener('DOMContentLoaded', function() {
       const mobileMenuBtn = document.getElementById('mobileMenuBtn');
+      const desktopToggleBtn = document.getElementById('desktopToggleBtn');
       const closeSidebarBtn = document.getElementById('closeSidebar');
+      const sidebar = document.getElementById('sidebar');
+      const mainContent = document.getElementById('main-container');
       
-      // Abrir/fechar sidebar no botão de menu
+      // Verificar se estamos em desktop e ajustar o estado inicial
+      if (window.innerWidth >= 1024) {
+        sidebar.classList.add('active');
+        mainContent.classList.add('sidebar-expanded');
+      }
+      
+      // Abrir/fechar sidebar no botão de menu mobile
       if (mobileMenuBtn) {
         mobileMenuBtn.addEventListener('click', function(e) {
+          e.stopPropagation();
+          toggleSidebar();
+        });
+      }
+      
+      // Abrir/fechar sidebar no botão de toggle desktop
+      if (desktopToggleBtn) {
+        desktopToggleBtn.addEventListener('click', function(e) {
           e.stopPropagation();
           toggleSidebar();
         });
@@ -379,6 +416,18 @@
       document.addEventListener('keydown', function(e) {
         if (e.key === 'Escape' && document.getElementById('sidebar').classList.contains('active')) {
           toggleSidebar();
+        }
+      });
+      
+      // Ajustar o layout quando a janela for redimensionada
+      window.addEventListener('resize', function() {
+        if (window.innerWidth >= 1024) {
+          document.body.style.overflow = '';
+          if (sidebar.classList.contains('active')) {
+            mainContent.classList.add('sidebar-expanded');
+          }
+        } else {
+          mainContent.classList.remove('sidebar-expanded');
         }
       });
     });
